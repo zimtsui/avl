@@ -1,0 +1,31 @@
+{
+    "name": "avl",
+    "version": "0.0.1",
+    "description": "",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "scripts": {
+        "build": "tsc -b",
+        "test": "tsc -b ./test/ && ava"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/zimtsui/avl.git"
+    },
+    "author": "Zim",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/zimtsui/avl/issues"
+    },
+    "homepage": "https://github.com/zimtsui/avl#readme",
+    "devDependencies": {
+        "@types/lodash": "^4.14.144",
+        "ava": "^2.4.0",
+        "lodash": "^4.17.15",
+        "typescript": "^3.6.4"
+    },
+    "ava": {
+        "failWithoutAssertions": false,
+        "verbose": true
+    }
+}
