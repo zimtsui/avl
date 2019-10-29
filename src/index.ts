@@ -23,7 +23,7 @@ class Avl<Data> {
             rightData: Data,
         ) => void,
         private getKey: (data: Data) => number,
-        private combine: (oldData: Data, newData: Data) => Data
+        private combineData: (oldData: Data, newData: Data) => Data
             = (oldData, newData) => newData,
     ) {
         this.NULL = <Node<Data>>{};
@@ -50,7 +50,8 @@ class Avl<Data> {
         return newRoot;
     }
 
-    private update(node: Node<Data>): Node<Data> {
+    // 只动了数据用 this.updateData，还动了结构用 this.updateNode
+    private updateNode(node: Node<Data>): Node<Data> {
         node.depth = Math.max(node.left.depth, node.right.depth) + 1;
         this.updateData(node.data, node.left.data, node.right.data);
         return node;
@@ -60,7 +61,7 @@ class Avl<Data> {
      * @param node 可以为 NULL
      * @returns [new root，new node]
      */
-    private addNode(node: Node<Data>, data: Data): Node<Data> {
+    private addNodeTo(node: Node<Data>, data: Data): Node<Data> {
         if (node === this.NULL) {
             const newNode: Node<Data> = {
                 data,
@@ -71,17 +72,17 @@ class Avl<Data> {
             return this.balance(newNode);
         } else {
             if (this.getKey(data) < this.getKey(node.data))
-                node.left = this.addNode(
+                node.left = this.addNodeTo(
                     node.left,
                     data,
                 );
             else if (this.getKey(data) > this.getKey(node.data))
-                node.right = this.addNode(
+                node.right = this.addNodeTo(
                     node.right,
                     data,
                 );
             else
-                node.data = this.combine(node.data, data);
+                node.data = this.combineData(node.data, data);
             return this.balance(node);
         }
     }
@@ -101,10 +102,10 @@ class Avl<Data> {
                 < node.left.right.depth
             ) {
                 node.left = this.leftRotate(node.left);
-                this.update(node.left.left);
+                this.updateNode(node.left.left);
             }
             newRoot = this.rightRotate(node);
-            this.update(node);
+            this.updateNode(node);
         } else if (
             node.right.depth
             > node.left.depth + 1
@@ -114,25 +115,26 @@ class Avl<Data> {
                 < node.right.left.depth
             ) {
                 node.right = this.rightRotate(node.right);
-                this.update(node.right.right);
+                this.updateNode(node.right.right);
             }
             newRoot = this.leftRotate(node);
-            this.update(node);
+            this.updateNode(node);
         }
 
-        return this.update(newRoot);
+        return this.updateNode(newRoot);
     }
 
     public add(data: Data): void {
-        this.root = this.addNode(
+        this.root = this.addNodeTo(
             this.root,
             data,
         );
     }
 
     private getMinNode(node: Node<Data>): Node<Data> {
-        while (node.left !== this.NULL) node = node.left;
-        return node;
+        if (node.left !== this.NULL)
+            return this.getMinNode(node.left);
+        else return node;
     }
 
     /**
@@ -155,15 +157,15 @@ class Avl<Data> {
     //     return this.balance(node);
     // }
 
-    private removeNode(node: Node<Data>, key: number): Node<Data> {
+    private removeNodeFrom(node: Node<Data>, key: number): Node<Data> {
         if (key < this.getKey(node.data)) {
-            node.left = this.removeNode(
+            node.left = this.removeNodeFrom(
                 node.left,
                 key,
             );
             return this.balance(node);
         } else if (key > this.getKey(node.data)) {
-            node.right = this.removeNode(
+            node.right = this.removeNodeFrom(
                 node.right,
                 key,
             );
@@ -173,7 +175,7 @@ class Avl<Data> {
                 return node.left;
             } else {
                 const minNode = this.getMinNode(node.right);
-                minNode.right = this.removeNode(
+                minNode.right = this.removeNodeFrom(
                     node.right,
                     this.getKey(minNode.data),
                 );
@@ -184,13 +186,13 @@ class Avl<Data> {
     }
 
     public remove(key: number): void {
-        this.root = this.removeNode(
+        this.root = this.removeNodeFrom(
             this.root,
             key,
         );
     }
 
-    public [Symbol.iterator]() {
+    public [Symbol.iterator](): IterableIterator<Data> {
         const a = <Data[]>[];
         /**
          * @param node 可以为 NULL
@@ -202,7 +204,33 @@ class Avl<Data> {
             iterate(node.right);
         }
         iterate(this.root);
-        return a[Symbol.iterator];
+        return a[Symbol.iterator]();
+    }
+
+    private findNodeFrom(node: Node<Data>, key: number): Node<Data> | undefined {
+        if (node === this.NULL) return undefined;
+        if (key < this.getKey(node.data))
+            return this.findNodeFrom(node.left, key);
+        else if (key > this.getKey(node.data))
+            return this.findNodeFrom(node.right, key);
+        else return node;
+    }
+
+    public find(key: number): Data | undefined {
+        const node = this.findNodeFrom(this.root, key);
+        return node ? node.data : undefined;
+    }
+
+    private updateNodeIn(node: Node<Data>, key: number): void {
+        if (key < this.getKey(node.data))
+            this.updateNodeIn(node.left, key);
+        else if (key > this.getKey(node.data))
+            this.updateNodeIn(node.right, key);
+        this.updateData(node.data, node.left.data, node.right.data);
+    }
+
+    public update(key: number): void {
+        this.updateNodeIn(this.root, key);
     }
 }
 

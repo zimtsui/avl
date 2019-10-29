@@ -14,7 +14,7 @@ ava_1.default('test 1', t => {
         return newData;
     });
     const a = [];
-    const n = 40000;
+    const n = 10000;
     const r = lodash_1.shuffle(lodash_1.range(n));
     for (let i = 0; i < n; i++) {
         if (lodash_1.random(5)) {

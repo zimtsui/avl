@@ -7,18 +7,18 @@ interface Node<Data> {
 declare class Avl<Data> {
     private updateData;
     private getKey;
-    private combine;
+    private combineData;
     NULL: Node<Data>;
     root: Node<Data>;
-    constructor(NULL_DATA: Data, updateData: (nodeData: Data, leftData: Data, rightData: Data) => void, getKey: (data: Data) => number, combine?: (oldData: Data, newData: Data) => Data);
+    constructor(NULL_DATA: Data, updateData: (nodeData: Data, leftData: Data, rightData: Data) => void, getKey: (data: Data) => number, combineData?: (oldData: Data, newData: Data) => Data);
     private leftRotate;
     private rightRotate;
-    private update;
+    private updateNode;
     /**
      * @param node 可以为 NULL
      * @returns [new root，new node]
      */
-    private addNode;
+    private addNodeTo;
     /**
      * @param node 可以是未更新的
      */
@@ -28,9 +28,13 @@ declare class Avl<Data> {
     /**
      * @param removee must be leaf
      */
-    private removeNode;
+    private removeNodeFrom;
     remove(key: number): void;
-    [Symbol.iterator](): () => IterableIterator<Data>;
+    [Symbol.iterator](): IterableIterator<Data>;
+    private findNodeFrom;
+    find(key: number): Data | undefined;
+    private updateNodeIn;
+    update(key: number): void;
 }
 export default Avl;
 export { Avl, Node, };
