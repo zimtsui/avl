@@ -155,7 +155,7 @@ class Avl {
     }
     findNodeFrom(node, key) {
         if (node === this.NULL)
-            return undefined;
+            return node;
         if (key < this.getKey(node.data))
             return this.findNodeFrom(node.left, key);
         else if (key > this.getKey(node.data))
@@ -165,7 +165,7 @@ class Avl {
     }
     find(key) {
         const node = this.findNodeFrom(this.root, key);
-        return node ? node.data : undefined;
+        return node.data;
     }
     updateNodeIn(node, key) {
         if (key < this.getKey(node.data))

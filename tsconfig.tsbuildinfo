@@ -134,8 +134,8 @@
         "signature": "63b66918290d794f73832a6d0325be5026236674fe8c0cb0b68d162000d7bbe8"
       },
       "./src/index.ts": {
-        "version": "84a055fdc93ab88f3bdae30dfd871373d6475197b19e749799feb7c7b30bde2f",
-        "signature": "c4fcce44df740fbd96079480f0a0b0e2ecc13f6af766cea4a6d4ae26cf603ebc"
+        "version": "1f2b67b5d90bfd19afb56cdb1a8df35b5e0215bf9d35dd454872e228ddf4cfc9",
+        "signature": "beecada54a24946302251b031ce3f5e57f584b47a84f498d989f16b08fa57f50"
       },
       "./node_modules/@types/events/index.d.ts": {
         "version": "400db42c3a46984118bff14260d60cec580057dc1ab4c2d7310beb643e4f5935",

@@ -207,8 +207,8 @@ class Avl<Data> {
         return a[Symbol.iterator]();
     }
 
-    private findNodeFrom(node: Node<Data>, key: number): Node<Data> | undefined {
-        if (node === this.NULL) return undefined;
+    private findNodeFrom(node: Node<Data>, key: number): Node<Data> {
+        if (node === this.NULL) return node;
         if (key < this.getKey(node.data))
             return this.findNodeFrom(node.left, key);
         else if (key > this.getKey(node.data))
@@ -216,9 +216,9 @@ class Avl<Data> {
         else return node;
     }
 
-    public find(key: number): Data | undefined {
+    public find(key: number): Data {
         const node = this.findNodeFrom(this.root, key);
-        return node ? node.data : undefined;
+        return node.data;
     }
 
     private updateNodeIn(node: Node<Data>, key: number): void {

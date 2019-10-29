@@ -32,7 +32,7 @@ declare class Avl<Data> {
     remove(key: number): void;
     [Symbol.iterator](): IterableIterator<Data>;
     private findNodeFrom;
-    find(key: number): Data | undefined;
+    find(key: number): Data;
     private updateNodeIn;
     update(key: number): void;
 }
