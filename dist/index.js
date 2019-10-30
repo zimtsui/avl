@@ -37,7 +37,9 @@ class Avl {
     // 只动了数据用 this.updateData，还动了结构用 this.updateNode
     updateNode(node) {
         node.depth = Math.max(node.left.depth, node.right.depth) + 1;
-        this.updateData(node.data, node.left.data, node.right.data);
+        const newData = this.updateData(node.data, node.left.data, node.right.data);
+        if (newData !== undefined)
+            node.data = newData;
         return node;
     }
     /**
@@ -153,7 +155,7 @@ class Avl {
         this.updateData(node.data, node.left.data, node.right.data);
     }
     /**
-     * @param f don't modify params
+     * @param f param data can be modified
      */
     modify(key, f) {
         let node = this.findNodeFrom(this.root, key);
@@ -161,7 +163,9 @@ class Avl {
             this.root = this.addNodeTo(this.root, key);
             node = this.findNodeFrom(this.root, key);
         }
-        node.data = f(node.data);
+        const newData = f(node.data);
+        if (newData !== undefined)
+            node.data = newData;
         if (this.getValue(node.data) === this.getValue(this.NULL.data))
             this.root = this.removeNodeFrom(this.root, key);
         else

@@ -15,7 +15,7 @@ declare class Avl<Data, Key = number | string> {
     /**
      * @param updateData don't modify params
      */
-    constructor(makeNullData: () => Data, updateData: (nodeData: Data, leftData: Data, rightData: Data) => void, getValue: (data: Data) => unknown, comparator?: (k1: Key, k2: Key) => boolean);
+    constructor(makeNullData: () => Data, updateData: (nodeData: Data, leftData: Data, rightData: Data) => Data | void, getValue: (data: Data) => unknown, comparator?: (k1: Key, k2: Key) => boolean);
     private leftRotate;
     private rightRotate;
     private updateNode;
@@ -41,9 +41,9 @@ declare class Avl<Data, Key = number | string> {
     find(key: Key): Data;
     private updateDataIn;
     /**
-     * @param f don't modify params
+     * @param f param data can be modified
      */
-    modify(key: Key, f: (data: Data) => Data): void;
+    modify(key: Key, f: (data: Data) => Data | void): void;
     update(key: Key): void;
 }
 export default Avl;

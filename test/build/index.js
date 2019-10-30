@@ -7,6 +7,11 @@ const ava_1 = __importDefault(require("ava"));
 const __1 = require("../../");
 const lodash_1 = require("lodash");
 ava_1.default('test 1', t => {
+    // const avl2 = new Avl<number | undefined>(
+    //     () => undefined,
+    //     () => { },
+    //     x => x,
+    // );
     const avl = new __1.Avl(() => ({ v: 0, s: 0, b: false }), (nodeData, leftData, rightData) => {
         nodeData.s = leftData.s + nodeData.v + rightData.s;
     }, data => data.b);

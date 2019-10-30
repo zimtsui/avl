@@ -16,7 +16,11 @@ test('test 1', t => {
         s: number;
         b: boolean;
     }
-
+    // const avl2 = new Avl<number | undefined>(
+    //     () => undefined,
+    //     () => { },
+    //     x => x,
+    // );
     const avl = new Avl<Data>(
         () => ({ v: 0, s: 0, b: false }),
         (nodeData, leftData, rightData) => {
