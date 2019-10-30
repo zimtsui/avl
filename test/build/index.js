@@ -7,12 +7,9 @@ const ava_1 = __importDefault(require("ava"));
 const __1 = require("../../");
 const lodash_1 = require("lodash");
 ava_1.default('test 1', t => {
-    const avl = new __1.Avl({ v: 0, s: 0 }, (nodeData, leftData, rightData) => {
+    const avl = new __1.Avl(() => ({ v: 0, s: 0, b: false }), (nodeData, leftData, rightData) => {
         nodeData.s = leftData.s + nodeData.v + rightData.s;
-    }, data => data.v, (oldData, newData) => {
-        newData.v += oldData.v;
-        return newData;
-    });
+    }, data => data.b);
     const a = [];
     const n = 10000;
     const r = lodash_1.shuffle(lodash_1.range(n));
@@ -21,15 +18,20 @@ ava_1.default('test 1', t => {
             const data = {
                 v: r.pop(),
                 s: 0,
+                b: true,
             };
-            avl.add(data);
+            avl.modify(data.v, () => data);
             a.push(data.v);
         }
         else if (a.length) {
             const index = lodash_1.random(a.length - 1);
             const v = a[index];
             a.splice(index, 1);
-            avl.remove(v);
+            avl.modify(v, data => ({
+                v: data.v,
+                s: 0,
+                b: false,
+            }));
         }
         t.deepEqual(lodash_1.sum(a), avl.root.data.s);
     }

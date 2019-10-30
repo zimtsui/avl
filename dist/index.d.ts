@@ -1,40 +1,50 @@
-interface Node<Data> {
-    left: Node<Data>;
-    right: Node<Data>;
+interface Node<Data, Key> {
+    left: Node<Data, Key>;
+    right: Node<Data, Key>;
     data: Data;
+    key: Key;
     depth: number;
 }
-declare class Avl<Data> {
+declare class Avl<Data, Key = number | string> {
+    private makeNullData;
     private updateData;
-    private getKey;
-    private combineData;
-    NULL: Node<Data>;
-    root: Node<Data>;
-    constructor(NULL_DATA: Data, updateData: (nodeData: Data, leftData: Data, rightData: Data) => void, getKey: (data: Data) => number, combineData?: (oldData: Data, newData: Data) => Data);
+    private getValue;
+    private comparator;
+    NULL: Node<Data, Key>;
+    root: Node<Data, Key>;
+    /**
+     * @param updateData don't modify params
+     */
+    constructor(makeNullData: () => Data, updateData: (nodeData: Data, leftData: Data, rightData: Data) => void, getValue: (data: Data) => unknown, comparator?: (k1: Key, k2: Key) => boolean);
     private leftRotate;
     private rightRotate;
     private updateNode;
     /**
-     * @param node 可以为 NULL
-     * @returns [new root，new node]
-     */
-    private addNodeTo;
-    /**
      * @param node 可以是未更新的
      */
     private balance;
-    add(data: Data): void;
     private getMinNode;
     /**
-     * @param removee must be leaf
+     * @param node 可以为 NULL
+     * @param key 必须不存在
+     */
+    private addNodeTo;
+    /**
+     * @param key 必须存在
      */
     private removeNodeFrom;
-    remove(key: number): void;
     [Symbol.iterator](): IterableIterator<Data>;
+    /**
+     * @returns this.NULL if not found
+     */
     private findNodeFrom;
-    find(key: number): Data;
-    private updateNodeIn;
-    update(key: number): void;
+    find(key: Key): Data;
+    private updateDataIn;
+    /**
+     * @param f don't modify params
+     */
+    modify(key: Key, f: (data: Data) => Data): void;
+    update(key: Key): void;
 }
 export default Avl;
 export { Avl, Node, };

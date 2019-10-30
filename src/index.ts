@@ -1,7 +1,8 @@
-interface Node<Data> {
-    left: Node<Data>;
-    right: Node<Data>;
+interface Node<Data, Key> {
+    left: Node<Data, Key>;
+    right: Node<Data, Key>;
     data: Data;
+    key: Key;
     depth: number;
 }
 
@@ -10,40 +11,43 @@ interface Node<Data> {
     2. 除非特殊说明，否则参数 node 都不能为 NULL
     3. 平衡树要求 key 不重复，key 是查找的唯一依据。
 */
-class Avl<Data> {
+class Avl<Data, Key = number | string> {
     // NULL 的 left 和 right 随便改。
-    public NULL: Node<Data>;
-    public root: Node<Data>;
+    public NULL: Node<Data, Key>;
+    public root: Node<Data, Key>;
 
+    /**
+     * @param updateData don't modify params
+     */
     constructor(
-        NULL_DATA: Data,
+        private makeNullData: () => Data,
         private updateData: (
             nodeData: Data,
             leftData: Data,
             rightData: Data,
         ) => void,
-        private getKey: (data: Data) => number,
-        private combineData: (oldData: Data, newData: Data) => Data
-            = (oldData, newData) => newData,
+        private getValue: (data: Data) => unknown,
+        private comparator: (k1: Key, k2: Key) => boolean
+            = (k1, k2) => k1 < k2,
     ) {
-        this.NULL = <Node<Data>>{};
+        this.NULL = <Node<Data, Key>>{};
         this.NULL.left = this.NULL;
         this.NULL.right = this.NULL;
-        this.NULL.data = NULL_DATA;
+        this.NULL.data = this.makeNullData();
         this.NULL.depth = 0;
 
         this.root = this.NULL;
     }
 
     // 新旧根节点都是未更新的
-    private leftRotate(oldRoot: Node<Data>): Node<Data> {
+    private leftRotate(oldRoot: Node<Data, Key>): Node<Data, Key> {
         const newRoot = oldRoot.right;
         oldRoot.right = newRoot.left;
         newRoot.left = oldRoot;
         return newRoot;
     }
 
-    private rightRotate(oldRoot: Node<Data>): Node<Data> {
+    private rightRotate(oldRoot: Node<Data, Key>): Node<Data, Key> {
         const newRoot = oldRoot.left;
         oldRoot.left = newRoot.right;
         newRoot.right = oldRoot;
@@ -51,69 +55,27 @@ class Avl<Data> {
     }
 
     // 只动了数据用 this.updateData，还动了结构用 this.updateNode
-    private updateNode(node: Node<Data>): Node<Data> {
+    private updateNode(node: Node<Data, Key>): Node<Data, Key> {
         node.depth = Math.max(node.left.depth, node.right.depth) + 1;
         this.updateData(node.data, node.left.data, node.right.data);
         return node;
     }
 
     /**
-     * @param node 可以为 NULL
-     * @returns [new root，new node]
-     */
-    private addNodeTo(node: Node<Data>, data: Data): Node<Data> {
-        if (node === this.NULL) {
-            const newNode: Node<Data> = {
-                data,
-                left: this.NULL,
-                right: this.NULL,
-                depth: 1,
-            };
-            return this.balance(newNode);
-        } else {
-            if (this.getKey(data) < this.getKey(node.data))
-                node.left = this.addNodeTo(
-                    node.left,
-                    data,
-                );
-            else if (this.getKey(data) > this.getKey(node.data))
-                node.right = this.addNodeTo(
-                    node.right,
-                    data,
-                );
-            else
-                node.data = this.combineData(node.data, data);
-            return this.balance(node);
-        }
-    }
-
-    /**
      * @param node 可以是未更新的
      */
-    private balance(node: Node<Data>): Node<Data> {
+    private balance(node: Node<Data, Key>): Node<Data, Key> {
         let newRoot = node;
 
-        if (
-            node.left.depth
-            > node.right.depth + 1
-        ) {
-            if (
-                node.left.left.depth
-                < node.left.right.depth
-            ) {
+        if (node.left.depth > node.right.depth + 1) {
+            if (node.left.left.depth < node.left.right.depth) {
                 node.left = this.leftRotate(node.left);
                 this.updateNode(node.left.left);
             }
             newRoot = this.rightRotate(node);
             this.updateNode(node);
-        } else if (
-            node.right.depth
-            > node.left.depth + 1
-        ) {
-            if (
-                node.right.right.depth
-                < node.right.left.depth
-            ) {
+        } else if (node.right.depth > node.left.depth + 1) {
+            if (node.right.right.depth < node.right.left.depth) {
                 node.right = this.rightRotate(node.right);
                 this.updateNode(node.right.right);
             }
@@ -124,72 +86,55 @@ class Avl<Data> {
         return this.updateNode(newRoot);
     }
 
-    public add(data: Data): void {
-        this.root = this.addNodeTo(
-            this.root,
-            data,
-        );
-    }
-
-    private getMinNode(node: Node<Data>): Node<Data> {
-        if (node.left !== this.NULL)
-            return this.getMinNode(node.left);
-        else return node;
+    private getMinNode(node: Node<Data, Key>): Node<Data, Key> {
+        if (node.left === this.NULL) return node;
+        else return this.getMinNode(node.left);
     }
 
     /**
-     * @param removee must be leaf
+     * @param node 可以为 NULL
+     * @param key 必须不存在
      */
-    // private removeLeaf(node: Node<Data>, key: number): Node<Data> {
-    //     if (key < this.getKey(node.data))
-    //         node.left = this.removeLeaf(
-    //             node.left,
-    //             key,
-    //         );
-    //     else if (key > this.getKey(node.data))
-    //         node.right = this.removeLeaf(
-    //             node.right,
-    //             key,
-    //         );
-    //     else
-    //         return this.NULL;
-
-    //     return this.balance(node);
-    // }
-
-    private removeNodeFrom(node: Node<Data>, key: number): Node<Data> {
-        if (key < this.getKey(node.data)) {
-            node.left = this.removeNodeFrom(
-                node.left,
+    private addNodeTo(node: Node<Data, Key>, key: Key): Node<Data, Key> {
+        if (node === this.NULL) {
+            const newNode: Node<Data, Key> = {
+                data: this.makeNullData(),
+                left: this.NULL,
+                right: this.NULL,
+                depth: 1,
                 key,
-            );
-            return this.balance(node);
-        } else if (key > this.getKey(node.data)) {
-            node.right = this.removeNodeFrom(
-                node.right,
-                key,
-            );
-            return this.balance(node);
+            };
+            return this.balance(newNode);
         } else {
-            if (node.right === this.NULL) {
+            if (this.comparator(key, node.key))
+                node.left = this.addNodeTo(node.left, key);
+            else if (this.comparator(node.key, key))
+                node.right = this.addNodeTo(node.right, key);
+            return this.balance(node);
+        }
+    }
+
+    /**
+     * @param key 必须存在
+     */
+    private removeNodeFrom(node: Node<Data, Key>, key: Key): Node<Data, Key> {
+        if (this.comparator(key, node.key)) {
+            node.left = this.removeNodeFrom(node.left, key);
+            return this.balance(node);
+        } else if (this.comparator(node.key, key)) {
+            node.right = this.removeNodeFrom(node.right, key);
+            return this.balance(node);
+        } else
+            if (node.right === this.NULL)
                 return node.left;
-            } else {
+            else {
                 const minNode = this.getMinNode(node.right);
                 minNode.right = this.removeNodeFrom(
-                    node.right,
-                    this.getKey(minNode.data),
+                    node.right, minNode.key,
                 );
                 minNode.left = node.left;
                 return this.balance(minNode);
             }
-        }
-    }
-
-    public remove(key: number): void {
-        this.root = this.removeNodeFrom(
-            this.root,
-            key,
-        );
     }
 
     public [Symbol.iterator](): IterableIterator<Data> {
@@ -197,7 +142,7 @@ class Avl<Data> {
         /**
          * @param node 可以为 NULL
          */
-        const iterate = (node: Node<Data>): void => {
+        const iterate = (node: Node<Data, Key>): void => {
             if (node === this.NULL) return;
             iterate(node.left);
             a.push(node.data);
@@ -207,30 +152,48 @@ class Avl<Data> {
         return a[Symbol.iterator]();
     }
 
-    private findNodeFrom(node: Node<Data>, key: number): Node<Data> {
+    /**
+     * @returns this.NULL if not found
+     */
+    private findNodeFrom(node: Node<Data, Key>, key: Key): Node<Data, Key> {
         if (node === this.NULL) return node;
-        if (key < this.getKey(node.data))
+        if (this.comparator(key, node.key))
             return this.findNodeFrom(node.left, key);
-        else if (key > this.getKey(node.data))
+        else if (this.comparator(node.key, key))
             return this.findNodeFrom(node.right, key);
         else return node;
     }
 
-    public find(key: number): Data {
+    public find(key: Key): Data {
         const node = this.findNodeFrom(this.root, key);
         return node.data;
     }
 
-    private updateNodeIn(node: Node<Data>, key: number): void {
-        if (key < this.getKey(node.data))
-            this.updateNodeIn(node.left, key);
-        else if (key > this.getKey(node.data))
-            this.updateNodeIn(node.right, key);
+    private updateDataIn(node: Node<Data, Key>, key: Key): void {
+        if (this.comparator(key, node.key))
+            this.updateDataIn(node.left, key);
+        else if (this.comparator(node.key, key))
+            this.updateDataIn(node.right, key);
         this.updateData(node.data, node.left.data, node.right.data);
     }
 
-    public update(key: number): void {
-        this.updateNodeIn(this.root, key);
+    /**
+     * @param f don't modify params
+     */
+    public modify(key: Key, f: (data: Data) => Data) {
+        let node = this.findNodeFrom(this.root, key);
+        if (node === this.NULL) {
+            this.root = this.addNodeTo(this.root, key);
+            node = this.findNodeFrom(this.root, key);
+        }
+        node.data = f(node.data);
+        if (this.getValue(node.data) === this.getValue(this.NULL.data))
+            this.root = this.removeNodeFrom(this.root, key);
+        else this.updateDataIn(this.root, key);
+    }
+
+    public update(key: Key): void {
+        this.updateDataIn(this.root, key);
     }
 }
 

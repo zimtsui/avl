@@ -14,18 +14,15 @@ test('test 1', t => {
     interface Data {
         v: number;
         s: number;
+        b: boolean;
     }
 
     const avl = new Avl<Data>(
-        { v: 0, s: 0 },
+        () => ({ v: 0, s: 0, b: false }),
         (nodeData, leftData, rightData) => {
             nodeData.s = leftData.s + nodeData.v + rightData.s;
         },
-        data => data.v,
-        (oldData, newData) => {
-            newData.v += oldData.v;
-            return newData;
-        }
+        data => data.b,
     );
 
     const a = <number[]>[];
@@ -37,14 +34,19 @@ test('test 1', t => {
             const data: Data = {
                 v: r.pop()!,
                 s: 0,
+                b: true,
             };
-            avl.add(data);
+            avl.modify(data.v, () => data);
             a.push(data.v);
         } else if (a.length) {
             const index = random(a.length - 1);
             const v = a[index];
             a.splice(index, 1);
-            avl.remove(v);
+            avl.modify(v, data => ({
+                v: data.v,
+                s: 0,
+                b: false,
+            }))
         }
         t.deepEqual(
             sum(a),

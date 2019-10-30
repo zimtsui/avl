@@ -6,14 +6,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
     3. 平衡树要求 key 不重复，key 是查找的唯一依据。
 */
 class Avl {
-    constructor(NULL_DATA, updateData, getKey, combineData = (oldData, newData) => newData) {
+    /**
+     * @param updateData don't modify params
+     */
+    constructor(makeNullData, updateData, getValue, comparator = (k1, k2) => k1 < k2) {
+        this.makeNullData = makeNullData;
         this.updateData = updateData;
-        this.getKey = getKey;
-        this.combineData = combineData;
+        this.getValue = getValue;
+        this.comparator = comparator;
         this.NULL = {};
         this.NULL.left = this.NULL;
         this.NULL.right = this.NULL;
-        this.NULL.data = NULL_DATA;
+        this.NULL.data = this.makeNullData();
         this.NULL.depth = 0;
         this.root = this.NULL;
     }
@@ -37,48 +41,20 @@ class Avl {
         return node;
     }
     /**
-     * @param node 可以为 NULL
-     * @returns [new root，new node]
-     */
-    addNodeTo(node, data) {
-        if (node === this.NULL) {
-            const newNode = {
-                data,
-                left: this.NULL,
-                right: this.NULL,
-                depth: 1,
-            };
-            return this.balance(newNode);
-        }
-        else {
-            if (this.getKey(data) < this.getKey(node.data))
-                node.left = this.addNodeTo(node.left, data);
-            else if (this.getKey(data) > this.getKey(node.data))
-                node.right = this.addNodeTo(node.right, data);
-            else
-                node.data = this.combineData(node.data, data);
-            return this.balance(node);
-        }
-    }
-    /**
      * @param node 可以是未更新的
      */
     balance(node) {
         let newRoot = node;
-        if (node.left.depth
-            > node.right.depth + 1) {
-            if (node.left.left.depth
-                < node.left.right.depth) {
+        if (node.left.depth > node.right.depth + 1) {
+            if (node.left.left.depth < node.left.right.depth) {
                 node.left = this.leftRotate(node.left);
                 this.updateNode(node.left.left);
             }
             newRoot = this.rightRotate(node);
             this.updateNode(node);
         }
-        else if (node.right.depth
-            > node.left.depth + 1) {
-            if (node.right.right.depth
-                < node.right.left.depth) {
+        else if (node.right.depth > node.left.depth + 1) {
+            if (node.right.right.depth < node.right.left.depth) {
                 node.right = this.rightRotate(node.right);
                 this.updateNode(node.right.right);
             }
@@ -87,56 +63,55 @@ class Avl {
         }
         return this.updateNode(newRoot);
     }
-    add(data) {
-        this.root = this.addNodeTo(this.root, data);
-    }
     getMinNode(node) {
-        if (node.left !== this.NULL)
-            return this.getMinNode(node.left);
-        else
+        if (node.left === this.NULL)
             return node;
+        else
+            return this.getMinNode(node.left);
     }
     /**
-     * @param removee must be leaf
+     * @param node 可以为 NULL
+     * @param key 必须不存在
      */
-    // private removeLeaf(node: Node<Data>, key: number): Node<Data> {
-    //     if (key < this.getKey(node.data))
-    //         node.left = this.removeLeaf(
-    //             node.left,
-    //             key,
-    //         );
-    //     else if (key > this.getKey(node.data))
-    //         node.right = this.removeLeaf(
-    //             node.right,
-    //             key,
-    //         );
-    //     else
-    //         return this.NULL;
-    //     return this.balance(node);
-    // }
+    addNodeTo(node, key) {
+        if (node === this.NULL) {
+            const newNode = {
+                data: this.makeNullData(),
+                left: this.NULL,
+                right: this.NULL,
+                depth: 1,
+                key,
+            };
+            return this.balance(newNode);
+        }
+        else {
+            if (this.comparator(key, node.key))
+                node.left = this.addNodeTo(node.left, key);
+            else if (this.comparator(node.key, key))
+                node.right = this.addNodeTo(node.right, key);
+            return this.balance(node);
+        }
+    }
+    /**
+     * @param key 必须存在
+     */
     removeNodeFrom(node, key) {
-        if (key < this.getKey(node.data)) {
+        if (this.comparator(key, node.key)) {
             node.left = this.removeNodeFrom(node.left, key);
             return this.balance(node);
         }
-        else if (key > this.getKey(node.data)) {
+        else if (this.comparator(node.key, key)) {
             node.right = this.removeNodeFrom(node.right, key);
             return this.balance(node);
         }
+        else if (node.right === this.NULL)
+            return node.left;
         else {
-            if (node.right === this.NULL) {
-                return node.left;
-            }
-            else {
-                const minNode = this.getMinNode(node.right);
-                minNode.right = this.removeNodeFrom(node.right, this.getKey(minNode.data));
-                minNode.left = node.left;
-                return this.balance(minNode);
-            }
+            const minNode = this.getMinNode(node.right);
+            minNode.right = this.removeNodeFrom(node.right, minNode.key);
+            minNode.left = node.left;
+            return this.balance(minNode);
         }
-    }
-    remove(key) {
-        this.root = this.removeNodeFrom(this.root, key);
     }
     [Symbol.iterator]() {
         const a = [];
@@ -153,12 +128,15 @@ class Avl {
         iterate(this.root);
         return a[Symbol.iterator]();
     }
+    /**
+     * @returns this.NULL if not found
+     */
     findNodeFrom(node, key) {
         if (node === this.NULL)
             return node;
-        if (key < this.getKey(node.data))
+        if (this.comparator(key, node.key))
             return this.findNodeFrom(node.left, key);
-        else if (key > this.getKey(node.data))
+        else if (this.comparator(node.key, key))
             return this.findNodeFrom(node.right, key);
         else
             return node;
@@ -167,15 +145,30 @@ class Avl {
         const node = this.findNodeFrom(this.root, key);
         return node.data;
     }
-    updateNodeIn(node, key) {
-        if (key < this.getKey(node.data))
-            this.updateNodeIn(node.left, key);
-        else if (key > this.getKey(node.data))
-            this.updateNodeIn(node.right, key);
+    updateDataIn(node, key) {
+        if (this.comparator(key, node.key))
+            this.updateDataIn(node.left, key);
+        else if (this.comparator(node.key, key))
+            this.updateDataIn(node.right, key);
         this.updateData(node.data, node.left.data, node.right.data);
     }
+    /**
+     * @param f don't modify params
+     */
+    modify(key, f) {
+        let node = this.findNodeFrom(this.root, key);
+        if (node === this.NULL) {
+            this.root = this.addNodeTo(this.root, key);
+            node = this.findNodeFrom(this.root, key);
+        }
+        node.data = f(node.data);
+        if (this.getValue(node.data) === this.getValue(this.NULL.data))
+            this.root = this.removeNodeFrom(this.root, key);
+        else
+            this.updateDataIn(this.root, key);
+    }
     update(key) {
-        this.updateNodeIn(this.root, key);
+        this.updateDataIn(this.root, key);
     }
 }
 exports.Avl = Avl;
