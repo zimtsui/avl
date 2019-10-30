@@ -1,6 +1,6 @@
 import test from 'ava';
 import {
-    Avl,
+    AvlMap,
     Node,
 } from '../../';
 import {
@@ -10,18 +10,13 @@ import {
     range,
 } from 'lodash';
 
-test('test 1', t => {
+test('test map', t => {
     interface Data {
         v: number;
         s: number;
         b: boolean;
     }
-    // const avl2 = new Avl<number | undefined>(
-    //     () => undefined,
-    //     () => { },
-    //     x => x,
-    // );
-    const avl = new Avl<Data>(
+    const avl = new AvlMap<Data>(
         () => ({ v: 0, s: 0, b: false }),
         (nodeData, leftData, rightData) => {
             nodeData.s = leftData.s + nodeData.v + rightData.s;

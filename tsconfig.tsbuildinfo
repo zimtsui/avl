@@ -133,9 +133,21 @@
         "version": "63b66918290d794f73832a6d0325be5026236674fe8c0cb0b68d162000d7bbe8",
         "signature": "63b66918290d794f73832a6d0325be5026236674fe8c0cb0b68d162000d7bbe8"
       },
+      "./src/base.ts": {
+        "version": "aea0e8a70a3a7f193e42fb001c0629beb0a3c3b83e7a1f416d0809eacf209c8d",
+        "signature": "934eb1ff01c18713e9af0b84a731d4e533ef4a063cc92669513cb3b5da8f0813"
+      },
+      "./src/map.ts": {
+        "version": "1e420af98943d9a2fba92c3aabf73c6981f90e3cb79d4c4b956583f14eb8455b",
+        "signature": "ffba00f2c2c0863f1d73b8f337c3f089908476562f54f7c3a55e686a008a1a8a"
+      },
+      "./src/set.ts": {
+        "version": "691a192aea32e25c994375d570d4f21499d020136515765fd5a169d85c6fa7be",
+        "signature": "1655a22d6b2f70c0a3c383e54520b8211bc59e64ea1fca5472bc07836794b1ff"
+      },
       "./src/index.ts": {
-        "version": "d4ae5005e3896ae40910a5e813e6ebee874ddef8e7436a38bd7ee48f867b2a32",
-        "signature": "6d8b38412666f30af456a69a38f6fab2d71713e0d7058e315c687a4912b41292"
+        "version": "6420937dea4dc59fe5ddac35557340d9606e69f6e80e58ae94d036d1882f1b29",
+        "signature": "de56142f285b512e015e89edea225e12f15f9ec92355b044835d169fa0c8d3b0"
       },
       "./node_modules/@types/events/index.d.ts": {
         "version": "400db42c3a46984118bff14260d60cec580057dc1ab4c2d7310beb643e4f5935",
@@ -601,7 +613,30 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "./src/base.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./src/map.ts": [
+        "./src/base.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./src/set.ts": [
+        "./src/base.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "./src/index.ts": [
+        "./src/base.ts",
+        "./src/map.ts",
+        "./src/set.ts",
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/util.d.ts",
@@ -2030,6 +2065,17 @@
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./src/index.ts": [
+        "./src/base.ts",
+        "./src/map.ts",
+        "./src/set.ts"
+      ],
+      "./src/set.ts": [
+        "./src/base.ts"
+      ],
+      "./src/map.ts": [
+        "./src/base.ts"
       ]
     },
     "semanticDiagnosticsPerFile": [
@@ -2127,7 +2173,10 @@
       "./node_modules/@types/lodash/ts3.1/common/string.d.ts",
       "./node_modules/@types/lodash/ts3.1/common/util.d.ts",
       "./node_modules/@types/lodash/ts3.1/index.d.ts",
-      "./src/index.ts"
+      "./src/base.ts",
+      "./src/index.ts",
+      "./src/set.ts",
+      "./src/map.ts"
     ]
   },
   "version": "3.6.4"
