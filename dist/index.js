@@ -4,6 +4,8 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./base"));
-__export(require("./map"));
-__export(require("./set"));
+var map_1 = require("./map");
+exports.AvlMap = map_1.AvlMap;
+var set_1 = require("./set");
+exports.AvlSet = set_1.AvlSet;
 //# sourceMappingURL=index.js.map

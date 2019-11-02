@@ -1,3 +1,3 @@
 export * from './base';
-export * from './map';
-export * from './set';
+export { AvlMap } from './map';
+export { AvlSet } from './set';

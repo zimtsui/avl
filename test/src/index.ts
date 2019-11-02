@@ -2,7 +2,7 @@ import test from 'ava';
 import {
     AvlMap,
     Node,
-} from '../../';
+} from '../../dist/map';
 import {
     random,
     sum,

@@ -1,4 +1,5 @@
-import { AvlBase, Node } from './base';
+import { AvlBase, NodeBase } from './base';
+declare type Node<Data, Key = number | string> = NodeBase<Data, Key>;
 declare class AvlSet<Data, Key = number | string> extends AvlBase<Data, Key> {
     constructor(NULL_DATA: Data, 
     /**

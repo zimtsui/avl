@@ -1,6 +1,6 @@
-interface Node<Data, Key> {
-    left: Node<Data, Key>;
-    right: Node<Data, Key>;
+interface NodeBase<Data, Key> {
+    left: NodeBase<Data, Key>;
+    right: NodeBase<Data, Key>;
     data: Data;
     key: Key;
     depth: number;
@@ -13,8 +13,8 @@ interface Node<Data, Key> {
 */
 abstract class AvlBase<Data, Key> {
     // NULL 的 left 和 right 随便改。
-    public NULL: Node<Data, Key>;
-    public root: Node<Data, Key>;
+    public NULL: NodeBase<Data, Key>;
+    public root: NodeBase<Data, Key>;
 
     constructor(
         NULL_DATA: Data,
@@ -28,7 +28,7 @@ abstract class AvlBase<Data, Key> {
         ) => Data | void,
         private comparator: (k1: Key, k2: Key) => boolean,
     ) {
-        this.NULL = <Node<Data, Key>>{};
+        this.NULL = <NodeBase<Data, Key>>{};
         this.NULL.left = this.NULL;
         this.NULL.right = this.NULL;
         this.NULL.data = NULL_DATA;
@@ -38,14 +38,14 @@ abstract class AvlBase<Data, Key> {
     }
 
     // 新根节点是未更新的
-    private leftRotate(oldRoot: Node<Data, Key>): Node<Data, Key> {
+    private leftRotate(oldRoot: NodeBase<Data, Key>): NodeBase<Data, Key> {
         const newRoot = oldRoot.right;
         oldRoot.right = newRoot.left;
         this.updateNode(newRoot.left = oldRoot);
         return newRoot;
     }
 
-    private rightRotate(oldRoot: Node<Data, Key>): Node<Data, Key> {
+    private rightRotate(oldRoot: NodeBase<Data, Key>): NodeBase<Data, Key> {
         const newRoot = oldRoot.left;
         oldRoot.left = newRoot.right;
         this.updateNode(newRoot.right = oldRoot);
@@ -53,7 +53,7 @@ abstract class AvlBase<Data, Key> {
     }
 
     // this.updateData 只由 this.updateNode 调用
-    private updateNode(node: Node<Data, Key>): Node<Data, Key> {
+    private updateNode(node: NodeBase<Data, Key>): NodeBase<Data, Key> {
         node.depth = Math.max(node.left.depth, node.right.depth) + 1;
         const newData = this.updateData(
             node.data, node.left.data, node.right.data,
@@ -65,7 +65,7 @@ abstract class AvlBase<Data, Key> {
     /**
      * @param node 可以是未更新的
      */
-    private balance(node: Node<Data, Key>): Node<Data, Key> {
+    private balance(node: NodeBase<Data, Key>): NodeBase<Data, Key> {
         if (node.left.depth > node.right.depth + 1) {
             if (node.left.left.depth < node.left.right.depth)
                 node.left = this.leftRotate(node.left);
@@ -78,7 +78,7 @@ abstract class AvlBase<Data, Key> {
         return this.updateNode(node);
     }
 
-    private getMinNode(node: Node<Data, Key>): Node<Data, Key> {
+    private getMinNode(node: NodeBase<Data, Key>): NodeBase<Data, Key> {
         if (node.left === this.NULL) return node;
         else return this.getMinNode(node.left);
     }
@@ -87,9 +87,9 @@ abstract class AvlBase<Data, Key> {
      * @param node 可以为 NULL
      * @param key 必须不存在
      */
-    protected addNodeTo(node: Node<Data, Key>, key: Key, data: Data): Node<Data, Key> {
+    protected addNodeTo(node: NodeBase<Data, Key>, key: Key, data: Data): NodeBase<Data, Key> {
         if (node === this.NULL) {
-            const newNode: Node<Data, Key> = {
+            const newNode: NodeBase<Data, Key> = {
                 data,
                 left: this.NULL,
                 right: this.NULL,
@@ -109,7 +109,7 @@ abstract class AvlBase<Data, Key> {
     /**
      * @param key 必须存在
      */
-    protected removeNodeFrom(node: Node<Data, Key>, key: Key): Node<Data, Key> {
+    protected removeNodeFrom(node: NodeBase<Data, Key>, key: Key): NodeBase<Data, Key> {
         if (this.comparator(key, node.key)) {
             node.left = this.removeNodeFrom(node.left, key);
             return this.balance(node);
@@ -130,7 +130,7 @@ abstract class AvlBase<Data, Key> {
     /**
      * @returns this.NULL if not found
      */
-    protected findNodeIn(node: Node<Data, Key>, key: Key): Node<Data, Key> {
+    protected findNodeIn(node: NodeBase<Data, Key>, key: Key): NodeBase<Data, Key> {
         if (node === this.NULL) return node;
         if (this.comparator(key, node.key))
             return this.findNodeIn(node.left, key);
@@ -139,7 +139,7 @@ abstract class AvlBase<Data, Key> {
         else return node;
     }
 
-    protected updateNodeIn(node: Node<Data, Key>, key: Key): Node<Data, Key> {
+    protected updateNodeIn(node: NodeBase<Data, Key>, key: Key): NodeBase<Data, Key> {
         if (this.comparator(key, node.key)) this.updateNodeIn(node.left, key);
         else if (this.comparator(node.key, key)) this.updateNodeIn(node.right, key);
         return this.updateNode(node);
@@ -153,7 +153,7 @@ abstract class AvlBase<Data, Key> {
         /**
          * @param node 可以为 NULL
          */
-        const iterate = (node: Node<Data, Key>): void => {
+        const iterate = (node: NodeBase<Data, Key>): void => {
             if (node === this.NULL) return;
             iterate(node.left);
             elems.push({
@@ -170,5 +170,5 @@ abstract class AvlBase<Data, Key> {
 export default AvlBase;
 export {
     AvlBase,
-    Node,
+    NodeBase,
 };

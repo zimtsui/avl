@@ -1,6 +1,6 @@
-interface Node<Data, Key> {
-    left: Node<Data, Key>;
-    right: Node<Data, Key>;
+interface NodeBase<Data, Key> {
+    left: NodeBase<Data, Key>;
+    right: NodeBase<Data, Key>;
     data: Data;
     key: Key;
     depth: number;
@@ -11,8 +11,8 @@ declare abstract class AvlBase<Data, Key> {
      */
     private updateData;
     private comparator;
-    NULL: Node<Data, Key>;
-    root: Node<Data, Key>;
+    NULL: NodeBase<Data, Key>;
+    root: NodeBase<Data, Key>;
     constructor(NULL_DATA: Data, 
     /**
      * @param nodeData can be modified
@@ -30,20 +30,20 @@ declare abstract class AvlBase<Data, Key> {
      * @param node 可以为 NULL
      * @param key 必须不存在
      */
-    protected addNodeTo(node: Node<Data, Key>, key: Key, data: Data): Node<Data, Key>;
+    protected addNodeTo(node: NodeBase<Data, Key>, key: Key, data: Data): NodeBase<Data, Key>;
     /**
      * @param key 必须存在
      */
-    protected removeNodeFrom(node: Node<Data, Key>, key: Key): Node<Data, Key>;
+    protected removeNodeFrom(node: NodeBase<Data, Key>, key: Key): NodeBase<Data, Key>;
     /**
      * @returns this.NULL if not found
      */
-    protected findNodeIn(node: Node<Data, Key>, key: Key): Node<Data, Key>;
-    protected updateNodeIn(node: Node<Data, Key>, key: Key): Node<Data, Key>;
+    protected findNodeIn(node: NodeBase<Data, Key>, key: Key): NodeBase<Data, Key>;
+    protected updateNodeIn(node: NodeBase<Data, Key>, key: Key): NodeBase<Data, Key>;
     [Symbol.iterator](): IterableIterator<{
         key: Key;
         data: Data;
     }>;
 }
 export default AvlBase;
-export { AvlBase, Node, };
+export { AvlBase, NodeBase, };

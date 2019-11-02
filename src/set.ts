@@ -1,7 +1,9 @@
 import {
     AvlBase,
-    Node,
+    NodeBase,
 } from './base';
+
+type Node<Data, Key = number | string> = NodeBase<Data, Key>;
 
 class AvlSet<Data, Key = number | string> extends AvlBase<Data, Key>{
     constructor(

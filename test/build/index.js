@@ -4,10 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ava_1 = __importDefault(require("ava"));
-const __1 = require("../../");
+const map_1 = require("../../dist/map");
 const lodash_1 = require("lodash");
 ava_1.default('test map', t => {
-    const avl = new __1.AvlMap(() => ({ v: 0, s: 0, b: false }), (nodeData, leftData, rightData) => {
+    const avl = new map_1.AvlMap(() => ({ v: 0, s: 0, b: false }), (nodeData, leftData, rightData) => {
         nodeData.s = leftData.s + nodeData.v + rightData.s;
     }, data => data.b);
     const a = [];

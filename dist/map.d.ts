@@ -1,4 +1,5 @@
-import { AvlBase, Node } from './base';
+import { AvlBase, NodeBase } from './base';
+declare type Node<Data, Key = number | string> = NodeBase<Data, Key>;
 declare class AvlMap<Data, Key = number | string> extends AvlBase<Data, Key> {
     private makeNullData;
     private getValue;

@@ -134,20 +134,20 @@
         "signature": "63b66918290d794f73832a6d0325be5026236674fe8c0cb0b68d162000d7bbe8"
       },
       "./src/base.ts": {
-        "version": "aea0e8a70a3a7f193e42fb001c0629beb0a3c3b83e7a1f416d0809eacf209c8d",
-        "signature": "934eb1ff01c18713e9af0b84a731d4e533ef4a063cc92669513cb3b5da8f0813"
+        "version": "03498c81f4052ac1dde448e1cb38be2494594868c578e1b5646d44d55bbdfd14",
+        "signature": "aedfb2392de046c758ed1da1170a8694727f427e6288d0216c0de36a47a2cbd5"
       },
       "./src/map.ts": {
-        "version": "1e420af98943d9a2fba92c3aabf73c6981f90e3cb79d4c4b956583f14eb8455b",
-        "signature": "ffba00f2c2c0863f1d73b8f337c3f089908476562f54f7c3a55e686a008a1a8a"
+        "version": "8de2816c94ff1aaeebc04c7743982afcaa9a4cb2540f2ae115cac8cf92cc8c36",
+        "signature": "9cc898de7e0be6b3334bae512cfc22fdb39b0bff23e2831a35dbd8e07f5306ad"
       },
       "./src/set.ts": {
-        "version": "691a192aea32e25c994375d570d4f21499d020136515765fd5a169d85c6fa7be",
-        "signature": "1655a22d6b2f70c0a3c383e54520b8211bc59e64ea1fca5472bc07836794b1ff"
+        "version": "03d5028ec4f37b397020c81a0968e520e7f16c48deddc1f28d1b545f775fc0a1",
+        "signature": "1f4e945ee1fa9c0261cd37e8367555a6ba7a897c3c99efdccb51c9c372cb3062"
       },
       "./src/index.ts": {
-        "version": "6420937dea4dc59fe5ddac35557340d9606e69f6e80e58ae94d036d1882f1b29",
-        "signature": "de56142f285b512e015e89edea225e12f15f9ec92355b044835d169fa0c8d3b0"
+        "version": "f9d407df737fe932f890e5010b0531c6959d5b7ca2712e36c212787749083314",
+        "signature": "ed7d5dc88285652083c46c2db34ea542839b4a741a2a38dcd7755bb414c077d8"
       },
       "./node_modules/@types/events/index.d.ts": {
         "version": "400db42c3a46984118bff14260d60cec580057dc1ab4c2d7310beb643e4f5935",
@@ -1454,6 +1454,17 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "./src/map.ts": [
+        "./src/base.ts"
+      ],
+      "./src/set.ts": [
+        "./src/base.ts"
+      ],
+      "./src/index.ts": [
+        "./src/base.ts",
+        "./src/map.ts",
+        "./src/set.ts"
+      ],
       "./node_modules/@types/events/index.d.ts": [
         "./node_modules/@types/node/fs.d.ts",
         "./node_modules/@types/node/ts3.2/fs.d.ts",
@@ -2065,17 +2076,6 @@
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./src/index.ts": [
-        "./src/base.ts",
-        "./src/map.ts",
-        "./src/set.ts"
-      ],
-      "./src/set.ts": [
-        "./src/base.ts"
-      ],
-      "./src/map.ts": [
-        "./src/base.ts"
       ]
     },
     "semanticDiagnosticsPerFile": [
